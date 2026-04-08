@@ -508,7 +508,7 @@
 
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { projectService } from "@/services/projects/project.service";
 import { ProjectDetailsSkeleton } from "@/components/ui/project-details-skeleton";
@@ -533,10 +533,12 @@ import {
   ExternalLink,
   ChevronRight,
   Terminal,
-  GlobeLock
+  GlobeLock,
+  AlertCircle
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 
 // ... (Interface Project remains the same as your input)
 
@@ -574,10 +576,13 @@ interface Project {
 
 export default function ProjectDetailsPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const { user, isLoggedIn } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const [ratingForm, setRatingForm] = useState({ vibes: 3, creativity: 3, usefulness: 3, cursedness: 3 });
   const [comment, setComment] = useState('');
@@ -596,6 +601,22 @@ export default function ProjectDetailsPage() {
       else { setProject(data); setError(null); }
     } catch (err) { setError("Failed to load project"); } 
     finally { setIsLoading(false); }
+  };
+
+  const handleDelete = async () => {
+    if (!project || !isProjectOwner) return;
+    
+    setIsDeleting(true);
+    const { error } = await projectService.deleteProject(project.id);
+    setIsDeleting(false);
+
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
+    toast.success("Project deleted successfully!");
+    router.push("/");
   };
 
   const handleSubmitReview = async () => {
@@ -654,10 +675,20 @@ export default function ProjectDetailsPage() {
             {/* Owner Exclusive Controls */}
             {isProjectOwner && (
               <div className="flex gap-2 w-full md:w-auto">
-                <Button variant="outline" size="sm" className="flex-1 md:flex-none gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 md:flex-none gap-2"
+                  onClick={() => router.push(`/projects/${project.id}/edit`)}
+                >
                   <Edit3 className="size-4" /> Edit Project
                 </Button>
-                <Button variant="destructive" size="sm" className="flex-1 md:flex-none gap-2">
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  className="flex-1 md:flex-none gap-2"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
                   <Trash2 className="size-4" /> Delete
                 </Button>
               </div>
@@ -823,6 +854,42 @@ export default function ProjectDetailsPage() {
           </aside>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <AlertCircle className="size-5" /> Delete Project
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Are you sure you want to delete this project? This action cannot be undone and will remove all associated ratings and comments.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="flex-1"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

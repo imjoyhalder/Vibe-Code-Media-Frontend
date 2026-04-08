@@ -172,7 +172,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <Card className="group relative h-full flex flex-col overflow-hidden border-border/50 bg-card hover:bg-accent/5 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
         
         {/* IMAGE SECTION */}
-        <div className="relative w-full aspect-video overflow-hidden">
+        {/* <div className="relative w-full aspect-video overflow-hidden">
           {project.screenshot ? (
             <>
               <Image
@@ -181,7 +181,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
-              {/* Vibe Score Overlay */}
+              
+
               <div className="absolute top-3 right-3 z-10">
                 <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-xs font-bold">
                   <Star className="size-3 fill-yellow-400 text-yellow-400" />
@@ -194,7 +195,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               No preview available
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* CONTENT SECTION */}
         <CardContent className="p-5 flex flex-col flex-1">

@@ -1,23 +1,29 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
-import { Plus } from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
+import { Search, Filter, ChevronDown } from "lucide-react";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { ProjectListSkeleton } from "../../components/projects/ProjectListSkeleton";
 import { projectService } from "@/services/projects/project.service";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function FeedPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
 
-  const fetchProjects = async (title?: string) => {
+  const fetchProjects = async (title?: string, tag?: string) => {
     setIsLoading(true);
-    const { data, error } = await projectService.getProjects({ title, limit: 30 });
+    const { data, error } = await projectService.getProjects({ title, tag, limit: 30 });
 
     if (error) {
       setError(error);
@@ -36,11 +42,22 @@ export default function FeedPage() {
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      fetchProjects(searchTerm.trim() || undefined);
+      fetchProjects(searchTerm.trim() || undefined, selectedTag || undefined);
     }, 400);
 
     return () => window.clearTimeout(timeout);
-  }, [searchTerm]);
+  }, [searchTerm, selectedTag]);
+
+  // Collect unique tags from all projects
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    projects.forEach(project => {
+      project.tags?.forEach((tag: { name: string }) => {
+        tagSet.add(tag.name);
+      });
+    });
+    return Array.from(tagSet).sort();
+  }, [projects]);
 
   const searchPlaceholder = useMemo(
     () => (searchTerm ? `Searching for "${searchTerm}"` : "Search projects by title..."),
@@ -73,13 +90,35 @@ export default function FeedPage() {
             />
           </div>
 
-          <Link
-            href="/projects/new"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-primary/20 active:scale-95"
-          >
-            <Plus weight="bold" className="size-4" />
-            Submit Project
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 rounded-full border-border bg-background/80 hover:bg-accent hover:text-accent-foreground"
+              >
+                <Filter className="h-4 w-4" />
+                {selectedTag ? `Tag: ${selectedTag}` : "Filter by tag"}
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                onClick={() => setSelectedTag("")}
+                className={!selectedTag ? "bg-accent" : ""}
+              >
+                All tags
+              </DropdownMenuItem>
+              {availableTags.map((tag) => (
+                <DropdownMenuItem
+                  key={tag}
+                  onClick={() => setSelectedTag(tag)}
+                  className={selectedTag === tag ? "bg-accent" : ""}
+                >
+                  {tag}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -107,11 +146,8 @@ export default function FeedPage() {
           <p className="text-3xl">✨</p>
           <h2 className="mt-4 text-2xl font-bold text-foreground">No matching projects</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Try a different search term or submit a new project.
+            Try a different search term or filter.
           </p>
-          <Link href="/projects/new" className="mt-6 inline-flex rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90">
-            Share your project
-          </Link>
         </div>
       )}
     </main>

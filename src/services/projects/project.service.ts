@@ -93,9 +93,23 @@ export const projectService = {
     }
   },
 
+  updateProject: async (id: string, projectData: any) => {
+    try {
+      const isFormData = projectData instanceof FormData;
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects/${id}`, {
+        method: "PUT",
+        headers: getAuthHeaders({ json: !isFormData }),
+        body: isFormData ? projectData : JSON.stringify(projectData),
+      });
+      return await handleResponse(response);
+    } catch (error: any) {
+      return { data: null, error: error.message };
+    }
+  },
+
   deleteProject: async (id: string) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/projects/${id}`, {
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects/${id}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
