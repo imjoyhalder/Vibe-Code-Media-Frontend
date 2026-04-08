@@ -3,11 +3,19 @@ import { getAuthHeaders, handleResponse } from "../apiClient";
 
 // Define the shape of your filters to match the backend
 export interface ProjectFilters {
+  title?: string;
   tag?: string;
   sort?: 'vibeScore' | 'createdAt';
   page?: number;
   limit?: number;
 }
+
+const getBaseUrl = () => {
+  if (typeof window === 'undefined') {
+    return env.BACKEND_URL;
+  }
+  return env.NEXT_PUBLIC_BACKEND_URL;
+};
 
 export const projectService = {
   // Existing getProjects...
@@ -16,13 +24,14 @@ export const projectService = {
       // 1. Convert the filters object into URL query parameters
       const queryParams = new URLSearchParams();
 
+      if (filters.title) queryParams.append('title', filters.title);
       if (filters.tag) queryParams.append('tag', filters.tag);
       if (filters.sort) queryParams.append('sort', filters.sort);
       if (filters.page) queryParams.append('page', filters.page.toString());
       if (filters.limit) queryParams.append('limit', filters.limit.toString());
 
       const queryString = queryParams.toString();
-      const url = `${env.BACKEND_URL}/api/v1/projects${queryString ? `?${queryString}` : ''}`;
+      const url = `${getBaseUrl()}/api/v1/projects${queryString ? `?${queryString}` : ''}`;
 
       // 2. Fetch data from the backend
       const response = await fetch(url, {
@@ -39,6 +48,7 @@ export const projectService = {
       const data = await response.json();
 
       // data will contain { projects, total, page, limit } based on your backend return
+      console.log(data)
       return { data, error: null };
     } catch (error) {
       console.error("Project Fetch Error:", error);
@@ -51,7 +61,7 @@ export const projectService = {
 
   getProjectById: async (id: string) => {
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/${id}`);
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects/${id}`);
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };
@@ -60,7 +70,7 @@ export const projectService = {
 
   getAverages: async () => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/projects/averages`);
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects/averages`);
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };
@@ -71,7 +81,7 @@ export const projectService = {
 
   createProject: async (projectData: any) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/projects`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(projectData),
@@ -97,7 +107,7 @@ export const projectService = {
   // --- Interactions ---
   submitReview: async (id: string, reviewData: any) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/projects/${id}/review`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/${id}/review`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(reviewData),
@@ -110,7 +120,7 @@ export const projectService = {
 
   getComments: async (id: string) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/projects/${id}/comments`);
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/${id}/comments`);
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };

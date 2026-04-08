@@ -63,6 +63,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { Navbar } from "@/components/common/navbar1";
+import { Footer } from "@/components/common/footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -97,6 +98,7 @@ export default async function RootLayout({
           <main className="flex-1 px-4 md:px-6 lg:px-10 mb-10">
             {children}
           </main>
+          <Footer />
           <Toaster position="top-center" richColors />
         </AuthProvider>
       </body>
