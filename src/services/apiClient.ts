@@ -1,10 +1,10 @@
 import { env } from "@/env";
 
- export const getAuthHeaders = () => {
+ export const getAuthHeaders = (options?: { json?: boolean }) => {
   const token = localStorage.getItem("token"); // Adjust based on your auth storage
   return {
-    "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options?.json === false ? {} : { "Content-Type": "application/json" }),
   };
 };
 

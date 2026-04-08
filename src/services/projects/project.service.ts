@@ -81,10 +81,11 @@ export const projectService = {
 
   createProject: async (projectData: any) => {
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects`, {
+      const isFormData = projectData instanceof FormData;
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects`, {
         method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(projectData),
+        headers: getAuthHeaders({ json: !isFormData }),
+        body: isFormData ? projectData : JSON.stringify(projectData),
       });
       return await handleResponse(response);
     } catch (error: any) {
