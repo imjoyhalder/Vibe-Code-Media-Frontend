@@ -15,10 +15,11 @@ export const userService = {
 
   updateProfile: async (updateData: any) => {
     try {
+      const isFormData = updateData instanceof FormData;
       const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/profile`, {
         method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(updateData),
+        headers: getAuthHeaders({ json: !isFormData }),
+        body: isFormData ? updateData : JSON.stringify(updateData),
       });
       return await handleResponse(response);
     } catch (error: any) {
@@ -31,6 +32,24 @@ export const userService = {
       const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/projects`, {
         headers: getAuthHeaders(),
       });
+      return await handleResponse(response);
+    } catch (error: any) {
+      return { data: null, error: error.message };
+    }
+  },
+
+  getActivity: async (params: { page?: number; limit?: number } = {}) => {
+    try {
+      const query = new URLSearchParams();
+      if (params.page) query.append("page", String(params.page));
+      if (params.limit) query.append("limit", String(params.limit));
+
+      const response = await fetch(
+        `${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/activity?${query.toString()}`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };
