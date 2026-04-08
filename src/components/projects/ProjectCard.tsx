@@ -1,9 +1,16 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 interface ProjectCardProps {
   project: {
+    id: string;
     title: string;
+    description: string;
     screenshot: string;
+    createdAt: string;
     author: {
       name: string;
     };
@@ -18,11 +25,15 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  // Calculate average vibe score
   const calculateVibeScore = (ratings: any[]) => {
     if (!ratings || ratings.length === 0) return "0.0";
     const total = ratings.reduce((acc, curr) => {
-      const avg = (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4;
+      const avg =
+        (curr.vibes +
+          curr.creativity +
+          curr.usefulness +
+          curr.cursedness) /
+        4;
       return acc + avg;
     }, 0);
     return (total / ratings.length).toFixed(1);
@@ -31,59 +42,76 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const vibeScore = calculateVibeScore(project.ratings);
 
   return (
-    <div className="group border rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-300">
-      {/* FIX: The parent must be 'relative' for 'fill' to work.
-          'aspect-video' ensures a consistent 16:9 ratio for all screenshots.
-      */}
-      <div className="relative aspect-video w-full bg-gray-100 overflow-hidden">
-        <Image
-          src={project.screenshot}
-          alt={project.title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          priority={false}
-        />
-      </div>
+    <Link href={`/project/${project.id}`}>
+      <Card className="group cursor-pointer overflow-hidden bg-white hover:shadow-xl transition-all duration-300">
+        
+        {/* IMAGE */}
+        {/* <div className="relative w-full aspect-video overflow-hidden">
+          <Image
+            src={project.screenshot}
+            alt={project.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </div> */}
 
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="text-lg font-bold text-gray-900 truncate pr-2">
-            {project.title}
-          </h3>
-          <div className="flex items-center bg-purple-50 text-purple-700 text-xs font-bold px-2 py-1 rounded-full border border-purple-100">
-            ⭐ {vibeScore}
-          </div>
-        </div>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {project.tags?.map((tag) => (
-            <span 
-              key={tag.id} 
-              className="text-[11px] bg-gray-50 text-gray-500 px-2 py-0.5 rounded border border-gray-100"
-            >
-              #{tag.name}
-            </span>
-          ))}
-          {project.tags?.length === 0 && (
-            <span className="text-[11px] text-gray-300 italic">no tags</span>
-          )}
-        </div>
-
-        {/* Author Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-50">
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 text-white flex items-center justify-center text-[10px] font-bold mr-2 shadow-sm">
-              {project.author.name.charAt(0).toUpperCase()}
+        {/* CONTENT */}
+        <CardContent className="p-5">
+          
+          {/* AUTHOR + DATE */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
+              {project.author.name.charAt(0)}
             </div>
-            <span className="font-medium">{project.author.name}</span>
+
+            <div className="text-sm text-gray-600">
+              <p className="font-medium text-gray-800">
+                {project.author.name}
+              </p>
+              <p className="text-xs">
+                {new Date(project.createdAt).toDateString()}
+              </p>
+            </div>
           </div>
-          <button className="text-xs font-semibold text-blue-600 hover:text-blue-800">
-            View details →
-          </button>
-        </div>
-      </div>
-    </div>
+
+          {/* TITLE */}
+          <h2 className="text-xl font-bold text-gray-900 leading-snug mb-2 group-hover:text-purple-600 transition">
+            {project.title}
+          </h2>
+
+          {/* DESCRIPTION */}
+          <p className="text-sm text-gray-500 line-clamp-2 mb-3">
+            {project.description}
+          </p>
+
+          {/* TAGS */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {project.tags?.map((tag) => (
+              <span
+                key={tag.id}
+                className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+              >
+                #{tag.name}
+              </span>
+            ))}
+          </div>
+
+          {/* FOOTER */}
+          <div className="flex items-center justify-between text-sm text-gray-500">
+            
+            {/* REACTIONS (fake UI like dev.to) */}
+            <div className="flex items-center gap-3">
+              <span>❤️ 12</span>
+              <span>💬 4</span>
+            </div>
+
+            {/* VIBE SCORE */}
+            <div className="font-semibold text-purple-600">
+              ⭐ {vibeScore}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

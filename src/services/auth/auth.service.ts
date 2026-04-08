@@ -15,11 +15,16 @@ export interface credentials{
 export const authService = {
   register: async (userData: userData) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/auth/register`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
+      console.log("Register Response:", response);
+      // if(!response.ok){
+      //   const errorData = await response.json();
+      //   throw new Error(errorData.message || "Registration failed");
+      // }
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };
@@ -28,7 +33,7 @@ export const authService = {
 
   login: async (credentials: credentials) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/auth/login`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),

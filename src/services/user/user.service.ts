@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../apiClient";
 export const userService = {
   getProfile: async () => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/users/profile`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/profile`, {
         headers: getAuthHeaders(),
       });
       return await handleResponse(response);
@@ -15,7 +15,7 @@ export const userService = {
 
   updateProfile: async (updateData: any) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/users/profile`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/profile`, {
         method: "PUT",
         headers: getAuthHeaders(),
         body: JSON.stringify(updateData),
@@ -28,7 +28,7 @@ export const userService = {
 
   getMyProjects: async () => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/users/projects`, {
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/projects`, {
         headers: getAuthHeaders(),
       });
       return await handleResponse(response);

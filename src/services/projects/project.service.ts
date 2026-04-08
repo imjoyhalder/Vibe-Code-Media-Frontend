@@ -3,55 +3,55 @@ import { getAuthHeaders, handleResponse } from "../apiClient";
 
 // Define the shape of your filters to match the backend
 export interface ProjectFilters {
-    tag?: string;
-    sort?: 'vibeScore' | 'createdAt';
-    page?: number;
-    limit?: number;
+  tag?: string;
+  sort?: 'vibeScore' | 'createdAt';
+  page?: number;
+  limit?: number;
 }
 
 export const projectService = {
   // Existing getProjects...
   getProjects: async (filters: ProjectFilters = {}) => {
-        try {
-            // 1. Convert the filters object into URL query parameters
-            const queryParams = new URLSearchParams();
-            
-            if (filters.tag) queryParams.append('tag', filters.tag);
-            if (filters.sort) queryParams.append('sort', filters.sort);
-            if (filters.page) queryParams.append('page', filters.page.toString());
-            if (filters.limit) queryParams.append('limit', filters.limit.toString());
+    try {
+      // 1. Convert the filters object into URL query parameters
+      const queryParams = new URLSearchParams();
 
-            const queryString = queryParams.toString();
-            const url = `${env.BACKEND_URL}/api/v1/projects${queryString ? `?${queryString}` : ''}`;
+      if (filters.tag) queryParams.append('tag', filters.tag);
+      if (filters.sort) queryParams.append('sort', filters.sort);
+      if (filters.page) queryParams.append('page', filters.page.toString());
+      if (filters.limit) queryParams.append('limit', filters.limit.toString());
 
-            // 2. Fetch data from the backend
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+      const queryString = queryParams.toString();
+      const url = `${env.BACKEND_URL}/api/v1/projects${queryString ? `?${queryString}` : ''}`;
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+      // 2. Fetch data from the backend
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-            const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-            // data will contain { projects, total, page, limit } based on your backend return
-            return { data, error: null };
-        } catch (error) {
-            console.error("Project Fetch Error:", error);
-            return { 
-                data: null, 
-                error: error instanceof Error ? error.message : 'Failed to fetch projects' 
-            };
-        }
-    },
+      const data = await response.json();
+
+      // data will contain { projects, total, page, limit } based on your backend return
+      return { data, error: null };
+    } catch (error) {
+      console.error("Project Fetch Error:", error);
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Failed to fetch projects'
+      };
+    }
+  },
 
   getProjectById: async (id: string) => {
     try {
-      const response = await fetch(`${env.BACKEND_URL}/api/v1/projects/${id}`);
+      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/${id}`);
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };
@@ -66,6 +66,8 @@ export const projectService = {
       return { data: null, error: error.message };
     }
   },
+
+  
 
   createProject: async (projectData: any) => {
     try {
@@ -114,4 +116,19 @@ export const projectService = {
       return { data: null, error: error.message };
     }
   }
+};
+
+
+
+export const calculateVibeScore = (ratings: Array<{ vibes: number; creativity: number; usefulness: number; cursedness: number }>) => {
+  if (!ratings || ratings.length === 0) return 0.0;
+
+  const total = ratings.reduce((acc, curr) => {
+    // Basic average of the four metrics
+    const avg = (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4;
+    return acc + avg;
+  }, 0);
+
+  // Return formatted to one decimal place (e.g., 4.2)
+  return (total / ratings.length).toFixed(1);
 };
