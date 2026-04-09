@@ -27,11 +27,21 @@ export const userService = {
     }
   },
 
-  getMyProjects: async () => {
+  getMyProjects: async (params: { page?: number; limit?: number } = {}) => {
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/projects`, {
+      const query = new URLSearchParams();
+
+      
+      if (params.page) query.append("page", String(params.page));
+      if (params.limit) query.append("limit", String(params.limit));
+
+      const queryString = query.toString();
+      const url = `${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users/projects${queryString ? `?${queryString}` : ""}`;
+
+      const response = await fetch(url, {
         headers: getAuthHeaders(),
       });
+
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };

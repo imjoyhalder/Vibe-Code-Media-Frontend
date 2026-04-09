@@ -162,7 +162,7 @@ export default function NewProjectPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="promptUsed">Prompt / idea</Label>
+                    <Label htmlFor="promptUsed">Prompt Used</Label>
                     <Textarea
                       id="promptUsed"
                       rows={4}
