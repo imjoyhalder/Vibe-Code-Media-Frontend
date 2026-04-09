@@ -155,7 +155,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const calculateVibeScore = (ratings: any[]) => {
+  const calculateVibeScore = (ratings: any[] = []) => {
     if (!ratings || ratings.length === 0) return "0.0";
     const total = ratings.reduce((acc, curr) => {
       const avg = (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4;
@@ -164,7 +164,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     return (total / ratings.length).toFixed(1);
   };
 
-  const vibeScore = calculateVibeScore(project.ratings);
+  const vibeScore = calculateVibeScore(project.ratings ?? []);
   
 
   return (
@@ -236,7 +236,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
 
           {/* TAGS */}
-          {project.tags.length > 0 && (
+          {project.tags?.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-5">
               {project.tags.slice(0, 3).map((tag) => (
                 <Badge 
@@ -259,7 +259,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors">
                 <MessageSquare className="size-4" />
-                <span className="text-xs font-medium">{project?.comments.length}</span>
+                <span className="text-xs font-medium">{project?.comments?.length ?? 0}</span>
               </div>
             </div>
             
