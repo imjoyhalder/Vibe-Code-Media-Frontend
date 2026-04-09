@@ -320,6 +320,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "../actions/theme-toggle"; // Verify this path
 import { useAuth } from "@/context/AuthContext";
+import { UserAvatar } from "./UserAvatar";
 
 interface MenuItem {
   title: string;
@@ -448,12 +449,12 @@ export function Navbar({ className }: { className?: string }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full border border-primary/20 p-0">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.avatarUrl} alt={user?.name} />
-                      <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                        {user?.name?.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+                    <UserAvatar
+                      name={user?.name || ""}
+                      avatarUrl={user?.avatarUrl}
+                      size="sm"
+                      showBorder={false}
+                    />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 mt-2" align="end" forceMount>

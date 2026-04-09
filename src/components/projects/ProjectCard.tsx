@@ -1,127 +1,3 @@
-// "use client";
-
-// import Image from "next/image";
-// import Link from "next/link";
-// import { Card, CardContent, CardFooter } from "@/components/ui/card";
-
-// interface ProjectCardProps {
-//   project: {
-//     id: string;
-//     title: string;
-//     description: string;
-//     screenshot: string;
-//     createdAt: string;
-//     author: {
-//       name: string;
-//     };
-//     tags: Array<{ id: string; name: string }>;
-//     comments: Array<{ id: string }>;
-//     ratings: Array<{
-//       vibes: number;
-//       creativity: number;
-//       usefulness: number;
-//       cursedness: number;
-//     }>;
-//   };
-// }
-
-// export default function ProjectCard({ project }: ProjectCardProps) {
-//   const calculateVibeScore = (ratings: any[]) => {
-//     if (!ratings || ratings.length === 0) return "0.0";
-//     const total = ratings.reduce((acc, curr) => {
-//       const avg =
-//         (curr.vibes +
-//           curr.creativity +
-//           curr.usefulness +
-//           curr.cursedness) /
-//         4;
-//       return acc + avg;
-//     }, 0);
-//     return (total / ratings.length).toFixed(1);
-//   };
-
-//   const vibeScore = calculateVibeScore(project.ratings);
-
-//   return (
-//     <Link href={`/project/${project.id}`}>
-//       <Card className="group cursor-pointer overflow-hidden bg-white hover:shadow-xl transition-all duration-300">
-        
-//         {/* IMAGE */}
-//         {project.screenshot ? (
-//           <div className="relative w-full aspect-video overflow-hidden">
-//             <Image
-//               src={project.screenshot}
-//               alt={project.title}
-//               fill
-//               className="object-cover group-hover:scale-105 transition-transform duration-500"
-//             />
-//           </div>
-//         ) : (
-//           <div className="flex h-44 items-center justify-center bg-muted text-muted-foreground">
-//             No preview available
-//           </div>
-//         )}
-
-//         {/* CONTENT */}
-//         <CardContent className="p-5">
-          
-//           {/* AUTHOR + DATE */}
-//           <div className="flex items-center gap-3 mb-3">
-//             <div className="w-9 h-9 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
-//               {project.author.name.charAt(0)}
-//             </div>
-
-//             <div className="text-sm text-gray-600">
-//               <p className="font-medium text-gray-800">
-//                 {project.author.name}
-//               </p>
-//               <p className="text-xs">
-//                 {new Date(project.createdAt).toDateString()}
-//               </p>
-//             </div>
-//           </div>
-
-//           {/* TITLE */}
-//           <h2 className="text-xl font-bold text-gray-900 leading-snug mb-2 group-hover:text-purple-600 transition">
-//             {project.title}
-//           </h2>
-
-//           {/* DESCRIPTION */}
-//           <p className="text-sm text-gray-500 line-clamp-2 mb-3">
-//             {project.description}
-//           </p>
-
-//           {/* TAGS */}
-//           <div className="flex flex-wrap gap-2 mb-4">
-//             {project.tags?.map((tag) => (
-//               <span
-//                 key={tag.id}
-//                 className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
-//               >
-//                 #{tag.name}
-//               </span>
-//             ))}
-//           </div>
-
-//           {/* FOOTER */}
-//           <div className="flex items-center justify-between text-sm text-gray-500">
-            
-//             {/* REACTIONS (fake UI like dev.to) */}
-//             <div className="flex items-center gap-3">
-//               <span>❤️ 12</span>
-//               <span>💬 {project?.comments.length}</span>
-//             </div>
-
-//             {/* VIBE SCORE */}
-//             <div className="font-semibold text-purple-600">
-//               ⭐ {vibeScore}
-//             </div>
-//           </div>
-//         </CardContent>
-//       </Card>
-//     </Link>
-//   );
-// }
 
 "use client";
 
@@ -131,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Heart, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/common/UserAvatar";
 
 interface ProjectCardProps {
   project: {
@@ -154,8 +31,15 @@ interface ProjectCardProps {
   };
 }
 
+interface ratings {
+  vibes: number;
+  creativity: number;
+  usefulness: number;
+  cursedness: number;
+}
+
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const calculateVibeScore = (ratings: any[] = []) => {
+  const calculateVibeScore = (ratings: ratings[] = []) => {
     if (!ratings || ratings.length === 0) return "0.0";
     const total = ratings.reduce((acc, curr) => {
       const avg = (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4;
@@ -164,7 +48,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     return (total / ratings.length).toFixed(1);
   };
 
-  const vibeScore = calculateVibeScore(project.ratings ?? []);
+  const vibeScore = Number(calculateVibeScore(project.ratings));
   
 
   return (
@@ -202,18 +86,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           
           {/* AUTHOR INFO */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="relative size-9 flex-shrink-0">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-purple-500 animate-pulse opacity-50 blur-[2px]" />
-              <div className="relative size-full rounded-full bg-secondary flex items-center justify-center border border-border overflow-hidden">
-                {project.author.avatarUrl ? (
-                   <Image src={project.author.avatarUrl} alt={project.author.name} fill className="object-cover" />
-                ) : (
-                  <span className="text-sm font-bold text-foreground">
-                    {project.author.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
-            </div>
+            <UserAvatar
+              name={project.author.name}
+              avatarUrl={project.author.avatarUrl}
+              size="sm"
+              showGradient={true}
+            />
 
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground truncate leading-tight">
@@ -263,8 +141,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               </div>
             </div>
             
-            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
-              Vibecode Proj
+            <div className="text-[10px] text-2xl font-bold text-muted-foreground/60 uppercase tracking-widest">
+              <h1 className="text-sm font-bold">Rating ✨{vibeScore}</h1>
             </div>
           </div>
         </CardContent>

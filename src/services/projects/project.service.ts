@@ -23,6 +23,7 @@ export const projectService = {
     try {
       // 1. Convert the filters object into URL query parameters
       const queryParams = new URLSearchParams();
+      console.log(queryParams)
 
       if (filters.title) queryParams.append('title', filters.title);
       if (filters.tag) queryParams.append('tag', filters.tag);
