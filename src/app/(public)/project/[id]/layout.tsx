@@ -9,28 +9,7 @@ export default function ProjectDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoggedIn, isLoading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !isLoggedIn) {
-      router.push("/login");
-    }
-  }, [isLoggedIn, isLoading, router]);
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-pulse">
-          <div className="h-12 w-12 rounded-full bg-muted" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoggedIn) {
-    return null;
-  }
-
+  // This is a public project page: anyone can visit it.
+  // Authentication is only required to post comments or ratings.
   return <>{children}</>;
 }

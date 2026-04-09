@@ -57,7 +57,7 @@ export function DashboardSidebar({
         {/* Action Button */}
         <div className="px-4 py-6">
           <Button asChild className="w-full justify-start gap-2 shadow-md hover:shadow-lg transition-all" size="lg">
-            <Link href="/projects/create">
+            <Link href="/projects/new">
               <Plus className="h-5 w-5" />
               <span className="font-semibold">Create Project</span>
             </Link>

@@ -24,7 +24,7 @@ export const projectService = {
     try {
       // 1. Convert the filters object into URL query parameters
       const queryParams = new URLSearchParams();
-      console.log(queryParams)
+      // console.log(queryParams)
 
       if (filters.title) queryParams.append('title', filters.title);
       if (filters.tag) queryParams.append('tag', filters.tag);
@@ -51,7 +51,7 @@ export const projectService = {
       const data = await response.json();
 
       // data will contain { projects, total, page, limit } based on your backend return
-      console.log(data)
+      // console.log(data)
       return { data, error: null };
     } catch (error) {
       console.error("Project Fetch Error:", error);
@@ -125,7 +125,7 @@ export const projectService = {
   // --- Interactions ---
   submitReview: async (id: string, reviewData: any) => {
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/${id}/review`, {
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects/${id}/review`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(reviewData),
@@ -138,7 +138,7 @@ export const projectService = {
 
   getComments: async (id: string) => {
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/projects/${id}/comments`);
+      const response = await fetch(`${getBaseUrl()}/api/v1/projects/${id}/comments`);
       return await handleResponse(response);
     } catch (error: any) {
       return { data: null, error: error.message };

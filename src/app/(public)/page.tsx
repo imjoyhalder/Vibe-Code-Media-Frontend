@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { ProjectListSkeleton } from "../../components/projects/ProjectListSkeleton";
@@ -32,7 +33,7 @@ export default function FeedPage() {
       setError(null);
       setProjects(data?.data?.projects || []);
     }
-    console.log(data?.data?.projects);
+    // console.log(data?.data?.projects);
     setIsLoading(false);
   };
 
@@ -64,7 +65,7 @@ export default function FeedPage() {
     [searchTerm]
   );
 
-  console.log(searchTerm)
+  // console.log(searchTerm)
 
   return (
     <main className="mx-auto w-full max-w-7xl pt-6">
@@ -90,7 +91,8 @@ export default function FeedPage() {
             />
           </div>
 
-          <DropdownMenu>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -119,7 +121,11 @@ export default function FeedPage() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button asChild variant="secondary" className="rounded-full px-5 sm:px-6">
+            <Link href="/projects/new">Post Project</Link>
+          </Button>
         </div>
+      </div>
       </div>
 
       {/* Error State */}

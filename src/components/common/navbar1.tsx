@@ -69,23 +69,17 @@ const menu: MenuItem[] = [
         title: "Trending",
         description: "See what the community is vibing with right now.",
         icon: <Zap className="size-5 text-yellow-500" />,
-        url: "/trending",
+        url: "/",
       },
       {
         title: "Recent Projects",
         description: "Freshly deployed apps from fellow developers.",
         icon: <Sunset className="size-5 text-purple-500" />,
-        url: "/recent",
-      },
-      {
-        title: "Leaderboard",
-        description: "Browse the highest-rated projects by vibe score.",
-        icon: <Star className="size-5 text-amber-400" />,
-        url: "/leaderboard",
+        url: "/",
       },
     ],
   },
-  { title: "Pricing", url: "/pricing" },
+  { title: "LeaderBoard", url: "/leaderboard" },
 ];
 
 export function Navbar({ className }: { className?: string }) {
@@ -207,7 +201,7 @@ export function Navbar({ className }: { className?: string }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard" className="cursor-pointer flex items-center">
-                      <LayoutGrid className="mr-2 h-4 w-4" /> My Projects
+                      <LayoutGrid className="mr-2 h-4 w-4" /> Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -244,7 +238,10 @@ export function Navbar({ className }: { className?: string }) {
                   <Zap className="size-5 text-primary" /> VibeCode
                 </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-2 pt-4">
+              <div className="flex flex-col gap-4 pt-4">
+                <Button asChild variant="secondary" className="w-full rounded-full">
+                  <Link href="/projects/new">Post Project</Link>
+                </Button>
                 <Accordion type="single" collapsible className="w-full">
                   {menu.map((item) => (
                     <AccordionItem key={item.title} value={item.title} className="border-none">
@@ -279,15 +276,32 @@ export function Navbar({ className }: { className?: string }) {
                   ))}
                 </Accordion>
                 <div className="flex flex-col gap-4 pt-6 border-t mt-4">
-                   <div className="flex items-center justify-between px-2">
-                     <span className="text-sm text-muted-foreground">Appearance</span>
-                     <ThemeToggle />
-                   </div>
-                   {isLoggedIn && (
-                     <Button variant="outline" onClick={logout} className="w-full justify-start gap-2 rounded-xl text-destructive">
-                        <LogOut className="size-4" /> Logout
-                     </Button>
-                   )}
+                  <div className="flex items-center justify-between px-2">
+                    <span className="text-sm text-muted-foreground">Appearance</span>
+                    <ThemeToggle />
+                  </div>
+                  {!isLoggedIn ? (
+                    <div className="flex flex-col gap-2 px-2">
+                      <Button asChild variant="outline" className="w-full rounded-full">
+                        <Link href="/login">Login</Link>
+                      </Button>
+                      <Button asChild className="w-full rounded-full">
+                        <Link href="/register">Get Started</Link>
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2 px-2">
+                      <Button asChild variant="outline" className="w-full rounded-full justify-start gap-2">
+                        <Link href="/dashboard/profile">Profile</Link>
+                      </Button>
+                      <Button asChild variant="outline" className="w-full rounded-full justify-start gap-2">
+                        <Link href="/dashboard">Dashboard</Link>
+                      </Button>
+                      <Button variant="destructive" onClick={logout} className="w-full rounded-full">
+                        Logout
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </SheetContent>

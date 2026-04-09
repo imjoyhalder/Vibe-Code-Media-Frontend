@@ -66,6 +66,7 @@ import { Navbar } from "@/components/common/navbar1";
 import { Footer } from "@/components/common/footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import LayoutWrapper from "@/components/common/LayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,6 +85,7 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const theme = cookieStore.get("theme")?.value || "dark";
+  
 
   return (
     <html
@@ -94,11 +96,13 @@ export default async function RootLayout({
       <body className={cn(geistSans.className, "min-h-full flex flex-col")}>
         <AuthProvider>
           {/* Navbar wrapper to ensure it stays consistent */}
-          <Navbar />
-          <main className="flex-1 px-4 md:px-6 lg:px-10 mb-10">
+          {/* <main className="flex-1 px-4 md:px-6 lg:px-10 mb-10">
             {children}
-          </main>
-          <Footer />
+          </main> */}
+          <Navbar className="" />
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
           <Toaster position="top-center" richColors />
         </AuthProvider>
       </body>

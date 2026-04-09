@@ -330,15 +330,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
 
-          {/* Tips Card */}
-          <Card className="bg-primary/5 border-primary/10 shadow-none">
-            <CardContent className="p-4 flex gap-3">
-              <AlertCircle className="h-5 w-5 text-primary shrink-0" />
-              <p className="text-xs text-primary-foreground/80 leading-relaxed">
-                <strong>Tip:</strong> A professional photo and a detailed bio help you stand out to potential clients and teammates.
-              </p>
-            </CardContent>
-          </Card>
+     
         </div>
       </form>
     </div>

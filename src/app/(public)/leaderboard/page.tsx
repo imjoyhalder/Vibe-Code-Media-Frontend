@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Trophy, Sparkles, Clock } from "lucide-react";
 import { projectService } from "@/services/projects/project.service";
 import ProjectCard from "@/components/projects/ProjectCard";
@@ -59,7 +60,7 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {timeRanges.map((option) => (
             <Button
               key={option.value}
@@ -73,6 +74,9 @@ export default function LeaderboardPage() {
               </span>
             </Button>
           ))}
+          <Button asChild variant="secondary" className="rounded-full px-5 sm:px-6">
+            <Link href="/projects/new">Post Project</Link>
+          </Button>
         </div>
       </div>
 

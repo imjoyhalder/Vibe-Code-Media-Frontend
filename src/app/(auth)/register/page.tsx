@@ -51,7 +51,7 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       const response = await authService.register(values);
-      console.log("Register response:", response);
+      // console.log("Register response:", response);
 
       if (response.error) {
         toast.error(response.error || "Registration failed. Please try again.");

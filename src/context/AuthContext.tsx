@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.setItem("user", JSON.stringify(data));
         } else {
           // Log the actual error to see why it failed
-          console.log("Profile Error Details:", error);
+          // console.log("Profile Error Details:", error);
 
           // ONLY logout if it's a specific auth failure
           // Check if your error message includes 'expired' or 'token' or 'unauthorized'

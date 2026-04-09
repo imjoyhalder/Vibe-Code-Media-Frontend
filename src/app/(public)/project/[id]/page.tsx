@@ -33,6 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { UserAvatar } from "@/components/common/UserAvatar";
+import Link from "next/link";
 
 
 // ... (Interface Project remains the same as your input)
@@ -59,7 +60,7 @@ export interface Project {
     creativity: number;
     usefulness: number;
     cursedness: number;
-    user: { name: string };
+    user: { id: string; name: string };
   }>;
   comments: Array<{
     id: string;
@@ -85,7 +86,7 @@ export default function ProjectDetailsPage() {
   const [commentType, setCommentType] = useState<'TOAST' | 'ROAST'>('TOAST');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  const userRating = project?.ratings.find(rating => rating.user.name === user?.name);
+  const userRating = project?.ratings.find(rating => rating.user.id === user?.id);
   const isProjectOwner = project?.author.id === user?.id;
 
   const fetchProject = async () => {
@@ -140,16 +141,30 @@ export default function ProjectDetailsPage() {
   if (isLoading) return <ProjectDetailsSkeleton />;
   if (error || !project) return <ErrorState message={error || "Project not found"} />;
 
-  const averageScore = project.ratings.length > 0
-    ? (project.ratings.reduce((acc, curr) => acc + (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4, 0) / project.ratings.length).toFixed(1)
+  const ratingCount = project.ratings.length;
+  const averageScore = ratingCount > 0
+    ? (project.ratings.reduce((acc, curr) => acc + (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4, 0) / ratingCount).toFixed(1)
     : "0.0";
-  console.log("Project Data:", project);
+
+  const ratingBreakdown = ratingCount > 0 ? {
+    vibes: project.ratings.reduce((acc, curr) => acc + curr.vibes, 0) / ratingCount,
+    creativity: project.ratings.reduce((acc, curr) => acc + curr.creativity, 0) / ratingCount,
+    usefulness: project.ratings.reduce((acc, curr) => acc + curr.usefulness, 0) / ratingCount,
+    cursedness: project.ratings.reduce((acc, curr) => acc + curr.cursedness, 0) / ratingCount,
+  } : {
+    vibes: 0,
+    creativity: 0,
+    usefulness: 0,
+    cursedness: 0,
+  };
+
+  // console.log("Project Data:", project);
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
       {/* 1. HERO HEADER */}
-      <div className="border-b bg-card/50 ">
-        <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className=" ">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
@@ -239,6 +254,32 @@ export default function ProjectDetailsPage() {
               </Card>
             )}
 
+            {/* Rating Breakdown */}
+            <Card className="bg-card/50 border border-border shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg">Rating Breakdown</CardTitle>
+                <CardDescription>{ratingCount} review{ratingCount === 1 ? '' : 's'} submitted</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {([
+                  { label: 'Vibes', value: ratingBreakdown.vibes },
+                  { label: 'Creativity', value: ratingBreakdown.creativity },
+                  { label: 'Utility', value: ratingBreakdown.usefulness },
+                  { label: 'Cursedness', value: ratingBreakdown.cursedness },
+                ]).map(metric => (
+                  <div key={metric.label} className="space-y-2">
+                    <div className="flex justify-between text-sm font-semibold">
+                      <span>{metric.label}</span>
+                      <span>{metric.value.toFixed(1)}</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-muted/30 overflow-hidden">
+                      <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(100, Math.max(0, (metric.value / 5) * 100))}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
             {/* Comments Feed */}
             <section className="space-y-6">
               <div className="flex items-center justify-between">
@@ -304,6 +345,50 @@ export default function ProjectDetailsPage() {
               </CardContent>
             </Card>
 
+            {ratingCount > 0 && (
+              <Card className="bg-card/50 border border-border shadow-sm">
+                <CardHeader>
+                  <CardTitle>Latest Ratings</CardTitle>
+                  <CardDescription>{Math.min(3, ratingCount)} recent ratings from the community</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {project.ratings.slice(0, 5).map((rating) => (
+                    <div key={rating.id} className="rounded-3xl border border-border/70 p-4 bg-background/80">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold">{rating.user.name}</p>
+                          <p className="text-xs text-muted-foreground">{rating.vibes + rating.creativity + rating.usefulness + rating.cursedness}/20 total</p>
+                        </div>
+                        <div className="flex items-center gap-1 text-yellow-400">
+                          {Array.from({ length: 5 }).map((_, index) => (
+                            <Star key={index} className={`size-4 ${Math.round((rating.vibes + rating.creativity + rating.usefulness + rating.cursedness) / 4) > index ? 'fill-current' : 'opacity-30'}`} />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-3 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+                        <div className="rounded-2xl bg-muted/20 p-3">
+                          <p className="font-semibold text-foreground">Vibes</p>
+                          <p>{rating.vibes}/5</p>
+                        </div>
+                        <div className="rounded-2xl bg-muted/20 p-3">
+                          <p className="font-semibold text-foreground">Creativity</p>
+                          <p>{rating.creativity}/5</p>
+                        </div>
+                        <div className="rounded-2xl bg-muted/20 p-3">
+                          <p className="font-semibold text-foreground">Utility</p>
+                          <p>{rating.usefulness}/5</p>
+                        </div>
+                        <div className="rounded-2xl bg-muted/20 p-3">
+                          <p className="font-semibold text-foreground">Cursedness</p>
+                          <p>{rating.cursedness}/5</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
             {/* Resource Access */}
             <Card>
               <CardHeader><CardTitle className="text-sm uppercase tracking-wider">Resources</CardTitle></CardHeader>
@@ -329,7 +414,7 @@ export default function ProjectDetailsPage() {
             </Card>
 
             {/* Review Terminal */}
-            {isLoggedIn && !userRating && !isProjectOwner && (
+            {isLoggedIn && !userRating && !isProjectOwner ? (
               <Card className="border-primary/20 bg-primary/5 shadow-inner">
                 <CardHeader>
                   <CardTitle className="text-lg">Submit Feedback</CardTitle>
@@ -364,6 +449,53 @@ export default function ProjectDetailsPage() {
                   <Button onClick={handleSubmitReview} className="w-full font-bold" disabled={isSubmittingReview}>
                     {isSubmittingReview ? "Processing..." : "Submit Review"}
                   </Button>
+                </CardContent>
+              </Card>
+            ) : !isLoggedIn ? (
+              <Card className="border border-border bg-card/80 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Login required</CardTitle>
+                  <CardDescription>To post a rating or comment, you must be signed in.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">This is a public project page, but rating and commenting are reserved for authenticated users only.</p>
+                  <Button asChild className="w-full">
+                    <Link href="/login">Login to Rate</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {isLoggedIn && userRating && (
+              <Card className="border border-primary/20 bg-primary/5">
+                <CardHeader>
+                  <CardTitle>Your Rating</CardTitle>
+                  <CardDescription>You already rated this project.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <Star key={index} className={`size-4 ${Math.round((userRating.vibes + userRating.creativity + userRating.usefulness + userRating.cursedness) / 4) > index ? 'fill-current text-yellow-400' : 'opacity-30'}`} />
+                    ))}
+                  </div>
+                  <div className="grid gap-2 text-sm text-muted-foreground">
+                    <div className="rounded-2xl bg-muted/20 p-3">
+                      <p className="font-semibold text-foreground">Vibes</p>
+                      <p>{userRating.vibes}/5</p>
+                    </div>
+                    <div className="rounded-2xl bg-muted/20 p-3">
+                      <p className="font-semibold text-foreground">Creativity</p>
+                      <p>{userRating.creativity}/5</p>
+                    </div>
+                    <div className="rounded-2xl bg-muted/20 p-3">
+                      <p className="font-semibold text-foreground">Utility</p>
+                      <p>{userRating.usefulness}/5</p>
+                    </div>
+                    <div className="rounded-2xl bg-muted/20 p-3">
+                      <p className="font-semibold text-foreground">Cursedness</p>
+                      <p>{userRating.cursedness}/5</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}

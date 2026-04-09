@@ -49,7 +49,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       const response = await authService.login(values);
-      console.log("Login Response:", response);
+      // console.log("Login Response:", response);
       
       if(response.error){
         toast.error(response.error || "Login failed. Please try again.");
