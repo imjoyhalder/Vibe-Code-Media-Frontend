@@ -45,9 +45,8 @@ export function DashboardSidebar({ isOpen = true, onClose }: { isOpen?: boolean;
 
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r bg-card text-card-foreground transition-transform duration-300 ease-in-out",
-          !isOpen && "-translate-x-full",
-          "md:relative md:translate-x-0"
+          "fixed left-0 top-0 md:top-16 z-40 flex h-screen w-64 flex-col border-r bg-card text-card-foreground transition-transform duration-300 ease-in-out",
+          !isOpen && "-translate-x-full"
         )}
       >
         {/* Logo Section */}
@@ -109,7 +108,7 @@ export function DashboardSidebar({ isOpen = true, onClose }: { isOpen?: boolean;
               </div>
             </div>
           )}
-          <Button
+          {/* <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
             onClick={() => {
@@ -119,7 +118,7 @@ export function DashboardSidebar({ isOpen = true, onClose }: { isOpen?: boolean;
           >
             <LogOut className="h-5 w-5" />
             <span className="font-medium">Logout</span>
-          </Button>
+          </Button> */}
         </div>
       </aside>
     </>
