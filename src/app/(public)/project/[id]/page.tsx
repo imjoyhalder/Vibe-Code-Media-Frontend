@@ -538,6 +538,8 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
+import { UserAvatar } from "@/components/common/UserAvatar";
 
 
 // ... (Interface Project remains the same as your input)
@@ -555,6 +557,7 @@ interface Project {
     id: string;
     name: string;
     email: string;
+    avatarUrl: string;
   };
   tags: Array<{ id: string; name: string }>;
   ratings: Array<{
@@ -570,7 +573,7 @@ interface Project {
     content: string;
     type: 'ROAST' | 'TOAST';
     createdAt: string;
-    user: { id: string; name: string };
+    user: { id: string; name: string, avatarUrl: string };
   }>;
 }
 
@@ -584,7 +587,7 @@ export default function ProjectDetailsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
-  const [ratingForm, setRatingForm] = useState({ vibes: 3, creativity: 3, usefulness: 3, cursedness: 3 });
+  const [ratingForm, setRatingForm] = useState({ vibes: 1, creativity: 1, usefulness: 1, cursedness: 1 });
   const [comment, setComment] = useState('');
   const [commentType, setCommentType] = useState<'TOAST' | 'ROAST'>('TOAST');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
@@ -647,6 +650,7 @@ export default function ProjectDetailsPage() {
   const averageScore = project.ratings.length > 0 
     ? (project.ratings.reduce((acc, curr) => acc + (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4, 0) / project.ratings.length).toFixed(1)
     : "0.0";
+  console.log("Project Data:", project);
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
@@ -661,9 +665,17 @@ export default function ProjectDetailsPage() {
               </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">{project.title}</h1>
               <div className="flex items-center gap-4 text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <UserIcon className="size-4" />
-                  <span className="text-sm font-medium">{project.author.name}</span>
+                <div className="flex items-center gap-3 p-2 rounded-lg bg-card/50 border">
+                  <UserAvatar
+                    name={project.author.name}
+                    avatarUrl={project.author.avatarUrl}
+                    size="md"
+                    showBorder={true}
+                  />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Created by</p>
+                    <p className="text-sm font-medium text-primary">{project.author.name}</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 border-l pl-4">
                   <Calendar className="size-4" />
@@ -746,21 +758,30 @@ export default function ProjectDetailsPage() {
               <div className="grid gap-4">
                 {project.comments.length > 0 ? (
                   project.comments.map((comment) => (
-                    <Card key={comment.id} className="border-none bg-card shadow-sm hover:shadow-md transition-shadow">
+                    <Card key={comment.id} className="border border-border/50 bg-card/30 hover:bg-card/50 transition-all duration-200 hover:shadow-md">
                       <CardContent className="p-6 space-y-4">
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-3">
-                            <div className="size-10 rounded-full bg-secondary flex items-center justify-center font-bold text-sm">
-                              {comment.user.name.charAt(0)}
-                            </div>
+                            <UserAvatar
+                              name={comment.user.name}
+                              avatarUrl={comment.user.avatarUrl}
+                              size="lg"
+                              showBorder={true}
+                            />
                             <div>
-                              <p className="text-sm font-semibold">{comment.user.name}</p>
-                              <p className="text-[10px] text-muted-foreground tracking-wide uppercase">{new Date(comment.createdAt).toDateString()}</p>
+                              <p className="text-sm font-semibold text-foreground">{comment.user.name}</p>
+                              <p className="text-xs text-muted-foreground">{new Date(comment.createdAt).toLocaleDateString()}</p>
                             </div>
                           </div>
-                          <Badge variant={comment.type === 'TOAST' ? 'secondary' : 'destructive'} className="rounded-md uppercase px-2 py-0.5 text-[10px]">
-                            {comment.type === 'TOAST' ? <Coffee className="size-3 mr-1" /> : <Flame className="size-3 mr-1" />}
-                            {comment.type}
+                          <Badge 
+                            variant={comment.type === 'TOAST' ? 'secondary' : 'destructive'} 
+                            className="rounded-full px-3 py-1 text-xs font-medium"
+                          >
+                            {comment.type === 'TOAST' ? (
+                              <><Coffee className="size-3 mr-1" /> Toast</>
+                            ) : (
+                              <><Flame className="size-3 mr-1" /> Roast</>
+                            )}
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">{comment.content}</p>
@@ -822,11 +843,13 @@ export default function ProjectDetailsPage() {
                   <CardDescription>Quantify your experience and leave a note.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <MetricInput label="Vibes" value={ratingForm.vibes} onChange={(v) => setRatingForm(p => ({...p, vibes: v}))} />
-                    <MetricInput label="Innovation" value={ratingForm.creativity} onChange={(v) => setRatingForm(p => ({...p, creativity: v}))} />
-                    <MetricInput label="Utility" value={ratingForm.usefulness} onChange={(v) => setRatingForm(p => ({...p, usefulness: v}))} />
-                    <MetricInput label="Cursedness" value={ratingForm.cursedness} onChange={(v) => setRatingForm(p => ({...p, cursedness: v}))} />
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 gap-6">
+                      <MetricInput label="Vibes" value={ratingForm.vibes} onChange={(v) => setRatingForm(p => ({...p, vibes: v}))} />
+                      <MetricInput label="Innovation" value={ratingForm.creativity} onChange={(v) => setRatingForm(p => ({...p, creativity: v}))} />
+                      <MetricInput label="Utility" value={ratingForm.usefulness} onChange={(v) => setRatingForm(p => ({...p, usefulness: v}))} />
+                      <MetricInput label="Cursedness" value={ratingForm.cursedness} onChange={(v) => setRatingForm(p => ({...p, cursedness: v}))} />
+                    </div>
                   </div>
                   
                   <div className="space-y-3">
@@ -894,12 +917,29 @@ export default function ProjectDetailsPage() {
   );
 }
 
-// Sub-component for clean Rating Inputs
+// Sub-component for clean Rating Inputs with Sliders
 function MetricInput({ label, value, onChange }: { label: string, value: number, onChange: (v: number) => void }) {
   return (
-    <div className="space-y-1.5">
-      <Label className="text-[10px] uppercase font-bold text-muted-foreground">{label}</Label>
-      <Input type="number" min={1} max={5} value={value} onChange={(e) => onChange(parseInt(e.target.value) || 1)} className="h-8 bg-background" />
+    <div className="space-y-3 p-4 rounded-lg border bg-card/50 hover:bg-card transition-colors">
+      <div className="flex justify-between items-center">
+        <Label className="text-sm font-semibold text-foreground">{label}</Label>
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-bold text-primary">{value}</span>
+          <span className="text-xs text-muted-foreground">/5</span>
+        </div>
+      </div>
+      <Slider
+        value={[value]}
+        onValueChange={(vals) => onChange(vals[0])}
+        max={5}
+        min={1}
+        step={1}
+        className="w-full"
+      />
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>Poor</span>
+        <span>Excellent</span>
+      </div>
     </div>
   );
 }

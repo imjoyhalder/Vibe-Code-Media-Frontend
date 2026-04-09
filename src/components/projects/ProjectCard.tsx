@@ -131,6 +131,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Heart, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/common/UserAvatar";
 
 interface ProjectCardProps {
   project: {
@@ -202,18 +203,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           
           {/* AUTHOR INFO */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="relative size-9 flex-shrink-0">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-purple-500 animate-pulse opacity-50 blur-[2px]" />
-              <div className="relative size-full rounded-full bg-secondary flex items-center justify-center border border-border overflow-hidden">
-                {project.author.avatarUrl ? (
-                   <Image src={project.author.avatarUrl} alt={project.author.name} fill className="object-cover" />
-                ) : (
-                  <span className="text-sm font-bold text-foreground">
-                    {project.author.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
-            </div>
+            <UserAvatar
+              name={project.author.name}
+              avatarUrl={project.author.avatarUrl}
+              size="sm"
+              showGradient={true}
+            />
 
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground truncate leading-tight">

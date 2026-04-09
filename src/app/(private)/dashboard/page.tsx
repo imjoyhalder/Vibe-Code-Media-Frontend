@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, List, LayoutGrid, UserCircle2 } from "lucide-react";
+import { UserAvatar } from "@/components/common/UserAvatar";
 
 interface UserProfile {
   id: string;
@@ -245,15 +246,12 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="flex flex-col gap-4 rounded-3xl border border-border/70 bg-muted p-6 sm:flex-row sm:items-center">
-                      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        {profile?.avatarUrl ? (
-                          <img src={profile.avatarUrl} alt={profile.name} className="h-24 w-24 rounded-full object-cover" />
-                        ) : (
-                          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-4xl font-bold text-primary">
-                            {profile?.name?.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
+                      <UserAvatar
+                        name={profile?.name || ""}
+                        avatarUrl={profile?.avatarUrl}
+                        size="xl"
+                        showBorder={true}
+                      />
                       <div className="space-y-2">
                         <div>
                           <h2 className="text-xl font-semibold text-foreground">{profile?.name}</h2>
