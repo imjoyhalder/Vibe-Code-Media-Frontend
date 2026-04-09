@@ -12,13 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
-import { 
-  Globe, 
-  Star, 
-  MessageSquare, 
-  Flame, 
-  Coffee, 
-  Calendar, 
+import {
+  Globe,
+  Star,
+  MessageSquare,
+  Flame,
+  Coffee,
+  Calendar,
   User as UserIcon,
   Tag,
   Trash2,
@@ -37,7 +37,7 @@ import { UserAvatar } from "@/components/common/UserAvatar";
 
 // ... (Interface Project remains the same as your input)
 
-interface Project {
+export interface Project {
   id: string;
   title: string;
   description: string;
@@ -79,12 +79,12 @@ export default function ProjectDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   const [ratingForm, setRatingForm] = useState({ vibes: 1, creativity: 1, usefulness: 1, cursedness: 1 });
   const [comment, setComment] = useState('');
   const [commentType, setCommentType] = useState<'TOAST' | 'ROAST'>('TOAST');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  
+
   const userRating = project?.ratings.find(rating => rating.user.name === user?.name);
   const isProjectOwner = project?.author.id === user?.id;
 
@@ -93,15 +93,15 @@ export default function ProjectDetailsPage() {
     try {
       setIsLoading(true);
       const { data, error } = await projectService.getProjectById(params.id);
-      if (error) { setError(error); setProject(null); } 
+      if (error) { setError(error); setProject(null); }
       else { setProject(data); setError(null); }
-    } catch (err) { setError("Failed to load project"); } 
+    } catch (err) { setError("Failed to load project"); }
     finally { setIsLoading(false); }
   };
 
   const handleDelete = async () => {
     if (!project || !isProjectOwner) return;
-    
+
     setIsDeleting(true);
     const { error } = await projectService.deleteProject(project.id);
     setIsDeleting(false);
@@ -124,14 +124,14 @@ export default function ProjectDetailsPage() {
         comment: comment.trim() ? { content: comment, type: commentType } : undefined,
       };
       const { error } = await projectService.submitReview(project.id, reviewData);
-      if (error) { toast.error(error); } 
+      if (error) { toast.error(error); }
       else {
         toast.success("Review submitted successfully!");
         await fetchProject();
         setComment('');
         setRatingForm({ vibes: 3, creativity: 3, usefulness: 3, cursedness: 3 });
       }
-    } catch (err) { toast.error("Failed to submit review"); } 
+    } catch (err) { toast.error("Failed to submit review"); }
     finally { setIsSubmittingReview(false); }
   };
 
@@ -140,7 +140,7 @@ export default function ProjectDetailsPage() {
   if (isLoading) return <ProjectDetailsSkeleton />;
   if (error || !project) return <ErrorState message={error || "Project not found"} />;
 
-  const averageScore = project.ratings.length > 0 
+  const averageScore = project.ratings.length > 0
     ? (project.ratings.reduce((acc, curr) => acc + (curr.vibes + curr.creativity + curr.usefulness + curr.cursedness) / 4, 0) / project.ratings.length).toFixed(1)
     : "0.0";
   console.log("Project Data:", project);
@@ -180,17 +180,17 @@ export default function ProjectDetailsPage() {
             {/* Owner Exclusive Controls */}
             {isProjectOwner && (
               <div className="flex gap-2 w-full md:w-auto">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="flex-1 md:flex-none gap-2"
                   onClick={() => router.push(`/projects/${project.id}/edit`)}
                 >
                   <Edit3 className="size-4" /> Edit Project
                 </Button>
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
+                <Button
+                  variant="destructive"
+                  size="sm"
                   className="flex-1 md:flex-none gap-2"
                   onClick={() => setShowDeleteConfirm(true)}
                 >
@@ -204,7 +204,7 @@ export default function ProjectDetailsPage() {
 
       <div className="max-w-6xl mx-auto px-6 mt-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
+
           {/* LEFT COLUMN: MAIN CONTENT */}
           <div className="lg:col-span-2 space-y-12">
             {/* Visual Preview */}
@@ -233,7 +233,7 @@ export default function ProjectDetailsPage() {
                 </CardHeader>
                 <CardContent>
                   <code className="text-sm leading-relaxed block font-mono bg-background/50 p-4 rounded-xl border italic text-foreground/80">
-                    "{project.promptUsed}"
+                    `{project?.promptUsed}`
                   </code>
                 </CardContent>
               </Card>
@@ -247,7 +247,7 @@ export default function ProjectDetailsPage() {
                 </h2>
                 <Badge variant="outline">{project.comments.length} Comments</Badge>
               </div>
-              
+
               <div className="grid gap-4">
                 {project.comments.length > 0 ? (
                   project.comments.map((comment) => (
@@ -266,8 +266,8 @@ export default function ProjectDetailsPage() {
                               <p className="text-xs text-muted-foreground">{new Date(comment.createdAt).toLocaleDateString()}</p>
                             </div>
                           </div>
-                          <Badge 
-                            variant={comment.type === 'TOAST' ? 'secondary' : 'destructive'} 
+                          <Badge
+                            variant={comment.type === 'TOAST' ? 'secondary' : 'destructive'}
                             className="rounded-full px-3 py-1 text-xs font-medium"
                           >
                             {comment.type === 'TOAST' ? (
@@ -292,16 +292,16 @@ export default function ProjectDetailsPage() {
           <aside className="space-y-8">
             {/* Global Stats */}
             <Card className="bg-primary text-primary-foreground border-none shadow-xl shadow-primary/20 overflow-hidden">
-               <CardContent className="p-8 text-center space-y-2">
-                  <p className="text-xs font-bold uppercase tracking-widest opacity-70">Project Score</p>
-                  <div className="text-7xl font-black">{averageScore}</div>
-                  <div className="flex justify-center gap-1.5 py-2 text-yellow-400">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className={`size-4 ${Number(averageScore)/2 >= s ? 'fill-current' : 'opacity-20'}`} />
-                    ))}
-                  </div>
-                  <p className="text-xs opacity-60 font-medium">Verified by {project.ratings.length} contributors</p>
-               </CardContent>
+              <CardContent className="p-8 text-center space-y-2">
+                <p className="text-xs font-bold uppercase tracking-widest opacity-70">Project Score</p>
+                <div className="text-7xl font-black">{averageScore}</div>
+                <div className="flex justify-center gap-1.5 py-2 text-yellow-400">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`size-4 ${Number(averageScore) / 2 >= s ? 'fill-current' : 'opacity-20'}`} />
+                  ))}
+                </div>
+                <p className="text-xs opacity-60 font-medium">Verified by {project.ratings.length} contributors</p>
+              </CardContent>
             </Card>
 
             {/* Resource Access */}
@@ -319,11 +319,11 @@ export default function ProjectDetailsPage() {
                   </Button>
                 )}
                 {project.tags.length > 0 && (
-                   <div className="flex flex-wrap gap-2 pt-4 border-t mt-4">
-                     {project.tags.map(t => (
-                       <Badge key={t.id} variant="secondary" className="text-[10px] font-bold">#{t.name}</Badge>
-                     ))}
-                   </div>
+                  <div className="flex flex-wrap gap-2 pt-4 border-t mt-4">
+                    {project.tags.map(t => (
+                      <Badge key={t.id} variant="secondary" className="text-[10px] font-bold">#{t.name}</Badge>
+                    ))}
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -338,13 +338,13 @@ export default function ProjectDetailsPage() {
                 <CardContent className="space-y-6">
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 gap-6">
-                      <MetricInput label="Vibes" value={ratingForm.vibes} onChange={(v) => setRatingForm(p => ({...p, vibes: v}))} />
-                      <MetricInput label="Innovation" value={ratingForm.creativity} onChange={(v) => setRatingForm(p => ({...p, creativity: v}))} />
-                      <MetricInput label="Utility" value={ratingForm.usefulness} onChange={(v) => setRatingForm(p => ({...p, usefulness: v}))} />
-                      <MetricInput label="Cursedness" value={ratingForm.cursedness} onChange={(v) => setRatingForm(p => ({...p, cursedness: v}))} />
+                      <MetricInput label="Vibes" value={ratingForm.vibes} onChange={(v) => setRatingForm(p => ({ ...p, vibes: v }))} />
+                      <MetricInput label="Innovation" value={ratingForm.creativity} onChange={(v) => setRatingForm(p => ({ ...p, creativity: v }))} />
+                      <MetricInput label="Utility" value={ratingForm.usefulness} onChange={(v) => setRatingForm(p => ({ ...p, usefulness: v }))} />
+                      <MetricInput label="Cursedness" value={ratingForm.cursedness} onChange={(v) => setRatingForm(p => ({ ...p, cursedness: v }))} />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <Label className="text-xs font-bold uppercase">Commentary</Label>
                     <Textarea placeholder="Constructive feedback..." className="bg-background resize-none h-24" value={comment} onChange={(e) => setComment(e.target.value)} />

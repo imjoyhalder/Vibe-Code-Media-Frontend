@@ -11,7 +11,8 @@ import {
   User, 
   LayoutGrid, 
   PlusCircle, 
-  Search 
+  Search,
+  Star,
 } from "lucide-react";
 
 import {
@@ -75,6 +76,12 @@ const menu: MenuItem[] = [
         description: "Freshly deployed apps from fellow developers.",
         icon: <Sunset className="size-5 text-purple-500" />,
         url: "/recent",
+      },
+      {
+        title: "Leaderboard",
+        description: "Browse the highest-rated projects by vibe score.",
+        icon: <Star className="size-5 text-amber-400" />,
+        url: "/leaderboard",
       },
     ],
   },

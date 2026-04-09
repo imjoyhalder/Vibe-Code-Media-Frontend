@@ -6,6 +6,7 @@ export interface ProjectFilters {
   title?: string;
   tag?: string;
   sort?: 'vibeScore' | 'createdAt';
+  timeRange?: 'week' | 'month' | 'all';
   page?: number;
   limit?: number;
 }
@@ -30,6 +31,7 @@ export const projectService = {
       if (filters.sort) queryParams.append('sort', filters.sort);
       if (filters.page) queryParams.append('page', filters.page.toString());
       if (filters.limit) queryParams.append('limit', filters.limit.toString());
+      if (filters.timeRange) queryParams.append('timeRange', filters.timeRange);
 
       const queryString = queryParams.toString();
       const url = `${getBaseUrl()}/api/v1/projects${queryString ? `?${queryString}` : ''}`;

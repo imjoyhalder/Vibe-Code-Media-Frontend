@@ -38,7 +38,7 @@ export default function DashboardPage() {
         if (projectsRes.data) setProjects(projectsRes.data.projects || []);
         if (activityRes.data) setActivity(activityRes.data.activity || []);
         if (averagesRes.data) setAverages(averagesRes.data || null);
-        
+
         if (profileRes.error || projectsRes.error) {
           setError("Some data could not be loaded. Please refresh.");
         }
@@ -69,7 +69,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Button asChild size="lg" className="rounded-full shadow-lg hover:shadow-primary/20 transition-all">
-           <Link href="/projects/new">Add New Project</Link>
+          <Link href="/projects/new">Add New Project</Link>
         </Button>
       </div>
 
@@ -81,32 +81,32 @@ export default function DashboardPage() {
 
       {/* Stats Overview */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard 
-          title="Projects" 
-          value={projects.length} 
-          description="Total work" 
-          icon={Briefcase} 
+        <StatCard
+          title="Projects"
+          value={projects.length}
+          description="Total work"
+          icon={Briefcase}
           color="blue"
         />
-        <StatCard 
-          title="Activity" 
-          value={activity.length} 
-          description="Recent hits" 
-          icon={ActivityIcon} 
+        <StatCard
+          title="Activity"
+          value={activity.length}
+          description="Recent hits"
+          icon={ActivityIcon}
           color="emerald"
         />
-        <StatCard 
-          title="Avg Vibe" 
-          value={averageScore} 
-          description="Community score" 
-          icon={Sparkles} 
+        <StatCard
+          title="Avg Vibe"
+          value={averageScore}
+          description="Community score"
+          icon={Sparkles}
           color="amber"
         />
-        <StatCard 
-          title="Status" 
-          value={profile ? "Active" : "-"} 
-          description={profile?.name || "Member"} 
-          icon={Shield} 
+        <StatCard
+          title="Status"
+          value={profile ? "Active" : "-"}
+          description={profile?.name || "Member"}
+          icon={Shield}
           color="indigo"
         />
       </div>
@@ -125,11 +125,11 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {loading ? (
-               <SkeletonLoader count={3} />
+              <SkeletonLoader count={3} />
             ) : projects.length ? (
               projects.slice(0, 3).map((project) => (
-                <Link 
-                  key={project.id} 
+                <Link
+                  key={project.id}
                   href={`/project/${project.id}`}
                   className="group block rounded-xl border bg-background/50 p-4 transition-all hover:border-primary/50 hover:bg-accent/50"
                 >
@@ -165,19 +165,19 @@ export default function DashboardPage() {
             ) : activity.length ? (
               activity.slice(0, 4).map((event) => (
                 <div key={event.id} className="flex gap-4 rounded-lg p-2 transition-colors hover:bg-muted/50">
-                   <div className={cn(
-                     "mt-1 flex h-8 w-8 items-center justify-center rounded-full shrink-0",
-                     event.activityType === 'rating' ? "bg-amber-100 text-amber-600" : "bg-sky-100 text-sky-600"
-                   )}>
-                     {event.activityType === 'rating' ? <Zap className="h-4 w-4" /> : <ActivityIcon className="h-4 w-4" />}
-                   </div>
-                   <div className="flex-1 space-y-0.5">
-                     <p className="text-sm font-semibold leading-none">{event.activityType === 'rating' ? "New Rating" : "Project Update"}</p>
-                     <p className="text-xs text-muted-foreground">{event.project?.title}</p>
-                   </div>
-                   <time className="text-[10px] text-muted-foreground uppercase font-medium pt-1">
-                     {new Date(event.createdAt).toLocaleDateString()}
-                   </time>
+                  <div className={cn(
+                    "mt-1 flex h-8 w-8 items-center justify-center rounded-full shrink-0",
+                    event.activityType === 'rating' ? "bg-amber-100 text-amber-600" : "bg-sky-100 text-sky-600"
+                  )}>
+                    {event.activityType === 'rating' ? <Zap className="h-4 w-4" /> : <ActivityIcon className="h-4 w-4" />}
+                  </div>
+                  <div className="flex-1 space-y-0.5">
+                    <p className="text-sm font-semibold leading-none">{event.activityType === 'rating' ? "New Rating" : "Project Update"}</p>
+                    <p className="text-xs text-muted-foreground">{event.project?.title}</p>
+                  </div>
+                  <time className="text-[10px] text-muted-foreground uppercase font-medium pt-1">
+                    {new Date(event.createdAt).toLocaleDateString()}
+                  </time>
                 </div>
               ))
             ) : (
