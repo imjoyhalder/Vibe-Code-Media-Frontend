@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server'
 
 export function proxy(request: NextRequest) {
   // Logic here runs before every request completes
+  const { pathname } = request.nextUrl
   return NextResponse.next()
 }
 
