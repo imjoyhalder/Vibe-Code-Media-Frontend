@@ -4,29 +4,7 @@ The modern, responsive React-based frontend for VibeCode Media, built with Next.
 
 **🚀 Live Demo:** [https://vibecode-gray.vercel.app](https://vibecode-gray.vercel.app)
 
----
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Project Structure](#project-structure)
-- [Running the Application](#running-the-application)
-- [Components Architecture](#components-architecture)
-- [Services & API Integration](#services--api-integration)
-- [Authentication](#authentication)
-- [Styling](#styling)
-- [State Management](#state-management)
-- [Scripts](#scripts)
-- [Environment Variables](#environment-variables)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [Support](#support)
-
----
 
 ## 🎯 Overview
 
