@@ -69,7 +69,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Button asChild size="lg" className="rounded-full shadow-lg hover:shadow-primary/20 transition-all">
-           <Link href="/projects/create">Add New Project</Link>
+           <Link href="/projects/new">Add New Project</Link>
         </Button>
       </div>
 

@@ -23,9 +23,9 @@ export default function DashboardLayout({
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col md:ml-64">
         {/* Header with Mobile Menu */}
-        <header >
+        <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
           <MobileNav />
           <div className="ml-auto flex items-center gap-4">
             {/* Additional header items can go here */}
