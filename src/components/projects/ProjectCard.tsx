@@ -164,7 +164,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     return (total / ratings.length).toFixed(1);
   };
 
-  const vibeScore = calculateVibeScore(project.ratings);
+  const vibeScore = Number(calculateVibeScore(project.ratings));
   
 
   return (
@@ -263,8 +263,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               </div>
             </div>
             
-            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
-              Vibecode Proj
+            <div className="text-[10px] text-2xl font-bold text-muted-foreground/60 uppercase tracking-widest">
+              <h1 className="text-sm font-bold">Rating ✨{vibeScore}</h1>
             </div>
           </div>
         </CardContent>
