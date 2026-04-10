@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ImagePlus, Tag, ArrowRight, Globe, GitBranch, Sparkles, Loader } from "lucide-react";
+import { ProjectDetailsSkeleton } from "@/components/ui/project-details-skeleton";
 
 const initialState = {
   title: "",
@@ -180,12 +181,7 @@ export default function EditProjectPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader className="size-12 animate-spin mx-auto text-primary" />
-          <p className="text-muted-foreground">Loading project...</p>
-        </div>
-      </div>
+      <ProjectDetailsSkeleton/>
     );
   }
 

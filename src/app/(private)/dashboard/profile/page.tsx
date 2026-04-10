@@ -17,6 +17,7 @@ import {
 import { userService } from "@/services/user/user.service";
 import type { UserProfile } from "@/services/user/user.types";
 import { toast } from "sonner"; // Recommended for professional notifications
+import { ProfileSkeleton } from "@/components/ui/profile-skeleton";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -120,14 +121,7 @@ export default function ProfilePage() {
     setSaving(false);
   };
 
-  if (loading) return (
-    <div className="flex h-[70vh] items-center justify-center">
-      <div className="flex flex-col items-center gap-2">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-muted-foreground animate-pulse">Loading profile...</p>
-      </div>
-    </div>
-  );
+  if (loading) return <ProfileSkeleton />;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 p-4 md:p-8 animate-in fade-in duration-500">
